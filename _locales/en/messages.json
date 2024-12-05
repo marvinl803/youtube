@@ -1229,6 +1229,9 @@
     "removeMemberOnly": {
         "message": "Remove member only videos"
     },
+    "removeShortVideos": {
+        "message": "Filter videos under 2 minutes"
+    },
     "sunset": {
         "message": "Sunset"
     },

@@ -400,6 +400,21 @@ extension.skeleton.main.layers.section.general = {
 					component: 'switch',
 					text: 'removeContextButtons',
 				},
+				remove_short_videos: {
+					component: 'switch',
+					text: 'removeShortVideos',
+					storage: 'remove_short_videos',
+					default: false,
+				
+					on: {
+						change: function (event) {
+							const isEnabled = event.target.checked;
+							ImprovedTube.storage.remove_short_videos = isEnabled;
+				
+							document.documentElement.setAttribute('it-remove-short-videos', isEnabled ? 'true' : 'false');
+						}
+					}
+				},
 			}
 		}
 	},

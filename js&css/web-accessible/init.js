@@ -168,3 +168,75 @@ window.addEventListener('load', function () {
 	}
 	//document.querySelector('#content, #guide[opened]').remove() }
 });
+
+// Code to filter videos by length
+
+// Function to hide short videos
+const removeShortVideos = () => {
+    const durationElements = document.querySelectorAll('.badge-shape-wiz__text');
+    durationElements.forEach((element) => {
+        const durationText = element.textContent.trim();
+        const parts = durationText.split(':').map(Number);
+
+		let hours = 0, minutes = 0, seconds = 0;
+
+		if (parts.length === 3) {
+			[hours, minutes, seconds] = parts;
+		} else if (parts.length === 2) {
+			[minutes, seconds] = parts;
+		} else if (parts.length === 1) {
+			[seconds] = parts;
+		}
+
+        const totalSeconds = (hours * 3600) + (minutes * 60) + seconds;
+
+        if (totalSeconds < 120) {
+            const videoContainer = element.closest('ytd-rich-item-renderer');
+            if (videoContainer) {
+                videoContainer.style.display = 'none';
+            }
+        }
+    });
+};
+
+// Function to show all videos
+const showAllVideos = () => {
+    const videoContainers = document.querySelectorAll('ytd-rich-item-renderer');
+    videoContainers.forEach((videoContainer) => {
+        videoContainer.style.display = '';
+    });
+};
+
+// Observer for dynamic updates
+const observer = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+        if (mutation.type === 'attributes' && mutation.attributeName === 'it-remove-short-videos') {
+            const attributeValue = document.documentElement.getAttribute('it-remove-short-videos');
+            if (attributeValue === 'true') {
+                removeShortVideos();
+            } else {
+                showAllVideos();
+            }
+        }
+    });
+});
+
+observer.observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ['it-remove-short-videos'],
+});
+
+// Additional observer for dynamically loaded videos when you scroll down
+const dynamicObserver = new MutationObserver(() => {
+    const attributeValue = document.documentElement.getAttribute('it-remove-short-videos');
+    if (attributeValue === 'true') {
+        removeShortVideos();
+    }
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+    dynamicObserver.observe(document.body, {
+        childList: true,
+        subtree: true,
+    });
+});
